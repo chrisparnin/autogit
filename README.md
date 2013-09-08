@@ -1,0 +1,4 @@
+autogit
+=======
+
+Automatic git checkins
