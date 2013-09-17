@@ -75,7 +75,7 @@ namespace ninlabsresearch.autogit
             m_RDT.GetDocumentInfo(docCookie, out flags, out readlocks, out editlocks, out name, out hier, out itemid, out docData);
 
             // Should this only be done first time document is made?  Or is just good practice since there can be other external changes...merging, refactoring...
-            HandleSave(name);
+            HandleSave(name, "pre save");
 
             return VSConstants.S_OK;
         }
@@ -91,18 +91,20 @@ namespace ninlabsresearch.autogit
             m_RDT.GetDocumentInfo(docCookie, out flags, out readlocks, out editlocks, out name, out hier, out itemid, out docData);
 
 
-            HandleSave(name);
+            HandleSave(name, "post save");
             return VSConstants.S_OK;
         }
 
-        private void HandleSave(string name)
+        private void HandleSave(string name, string kind)
         {
             try
             {
                 // add file to commit!
-                provider.CopyFileToCache(name);
-                // commit to git...
-                var commitId = provider.Commit();
+                if (provider.CopyFileToCache(name))
+                {
+                    // commit to git...
+                    var commitId = provider.Commit(kind);
+                }
             }
             catch (Exception ex)
             {

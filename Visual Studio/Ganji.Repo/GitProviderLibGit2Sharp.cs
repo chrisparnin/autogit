@@ -105,7 +105,7 @@ namespace Ganji.Repo
             this.UserName = WindowsIdentity.GetCurrent().Name;
         }
 
-        public void CopyFileToCache(string file)
+        public bool CopyFileToCache(string file)
         {
             using (Repository repo = new Repository(RepoPath))
             {
@@ -113,19 +113,27 @@ namespace Ganji.Repo
                 System.IO.File.Copy(file, newPath, true);
 
                 repo.Index.Stage(newPath);
+
+                var status = repo.Index.RetrieveStatus(newPath);
+                if (status == FileStatus.Unaltered)
+                {
+                    // file was unchanged...can skip commit.
+                    return false;
+                }
+                return true;
+
             }
         }
 
-        public string Commit()
+        public string Commit(string kind)
         {
             if( string.IsNullOrEmpty( RepoPath ) )
                 throw new ArgumentException("Must open first");
 
-
             using( Repository repo = new Repository(RepoPath) )
             {
-                var author = new Signature(UserName, "nulltoken", DateTimeOffset.Now);
-                var commit = repo.Commit("Ganji commit\n", author, author);
+                var author = new Signature(UserName, UserName, DateTimeOffset.Now);
+                var commit = repo.Commit( string.Format("Ganji commit - %s", kind), author, author);
                 return commit.Id.Sha;
             }
         }
