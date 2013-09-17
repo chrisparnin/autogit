@@ -37,9 +37,13 @@ Future editor support is planned.  Pull requests or issues are welcome!
 
 ### Installing autogit
 
-autogit is at an *experimental* stage. Better install instrumentions and setup files are forth-coming.
+autogit is at an *experimental* stage. 
 
 #### Visual Studio
 
+You can autogit from the Visual Studio gallery:
+http://visualstudiogallery.msdn.microsoft.com/45a3d62b-955e-43cb-9d91-255a837d5f35
+
 #### Sublime Text 2
 
+Better install instrumentions and setup files are forth-coming.
