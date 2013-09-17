@@ -133,7 +133,7 @@ namespace Ganji.Repo
             using( Repository repo = new Repository(RepoPath) )
             {
                 var author = new Signature(UserName, UserName, DateTimeOffset.Now);
-                var commit = repo.Commit( string.Format("Ganji commit - %s", kind), author, author);
+                var commit = repo.Commit( string.Format("Ganji commit - {0}", kind), author, author);
                 return commit.Id.Sha;
             }
         }
