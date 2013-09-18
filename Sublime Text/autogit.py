@@ -6,7 +6,9 @@ from os.path import expanduser
 # Paths
 
 HOME = expanduser("~")
-PYGIT2_BASEDIR = '/Library/Python/2.7/site-packages/'
+#PYGIT2_BASEDIR = '/Library/Python/2.7/site-packages/'
+PYGIT2_BASEDIR = 'site-packages/'
+
 AUTOGIT_PATH = '/usr/local/autogit/'
 
 # libgit2_path = os.getenv("LIBGIT2")
