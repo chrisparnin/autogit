@@ -33,7 +33,7 @@ autogit is available as a set of plugins for the following editors:
 
 * Sublime Text 2
 
-Future editor support is planned.  Pull requests or issues are welcome!
+Future editor support is planned.  [Pull requests](https://github.com/chrisparnin/autogit/pulls) or suggestions in [issues](https://github.com/chrisparnin/autogit/issues/new) are welcome!
 
 ### Installing autogit
 
