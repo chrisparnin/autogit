@@ -18,11 +18,11 @@ Some deeper reasons:
 
 * **Better Task Resumption:** research suggests that resuming an interrupted task or reviewing a change made by another is made easier when changes can be reviewed in an time-ordered manner (in comparision to a flat commit).
 
-* **Auto-blog:** [automark](https://github.com/chrisparnin/automark) is a sister project can examine a git repository and can automatically generate a markdown file, recapping a recent program experience in a format suitable for publishing a blog post.
+* **Auto-blog:** [automark](https://github.com/chrisparnin/automark) is a sister project that can examine a git repository and then automatically generate a markdown file, in a format suitable for publishing a blog post.
 
-* **Personal Analytics:** Watts Humphrey has advocated the idea of tracking personal activity for self-improvement, using methods such as the Personal Software Process.  Using services, such as [http://codealike.com/](codealike) or [codeivate](http://www.codeivate.com/), you can track things like time spent editing, etc.  Tracking the *actual* changes can take this analysis to a another level.
+* **Personal Analytics:** Watts Humphrey has advocated the idea of tracking personal activity for self-improvement, using methods such as the Personal Software Process.  Using services, such as [http://codealike.com/](codealike) or [codeivate](http://www.codeivate.com/), you can track things like time spent editing, etc.  Tracking the *actual* changes can take this analysis to another level.
 
-* **Api Analytics:** support analysis that reveals frequent mistakes that are made when programming or using particular apis: "You spent 3 hours figuring out how to correctly use pygit2.create_commit(), create github issue?"
+* **Api Analytics:** Frequent mistakes are made when programming or using particular apis.  This can be analyzed: "You spent 3 hours figuring out how to correctly use pygit2.create_commit(), create github issue?"
 
 
 ### Supported Editors
