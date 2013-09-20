@@ -46,4 +46,5 @@ http://visualstudiogallery.msdn.microsoft.com/45a3d62b-955e-43cb-9d91-255a837d5f
 
 #### Sublime Text 2
 
-Better install instrumentions and setup files are forth-coming.
+You can install autogit from the Package Control site:
+https://sublime.wbond.net/packages/autogit
