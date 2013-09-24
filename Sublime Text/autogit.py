@@ -7,7 +7,9 @@ from os.path import expanduser
 
 HOME = expanduser("~")
 #PYGIT2_BASEDIR = '/Library/Python/2.7/site-packages/'
-PYGIT2_BASEDIR = 'site-packages/'
+PACKAGE_PATH = os.path.dirname(os.path.realpath(__file__))
+
+PYGIT2_BASEDIR = os.path.join(PACKAGE_PATH,'site-packages')
 
 AUTOGIT_PATH = '/usr/local/autogit/'
 
@@ -25,7 +27,10 @@ WinOsVersion,_,_,_ = platform.win32_ver()
 MacOsVersion,_,_ = platform.mac_ver()
 if( WinOsVersion ):
 	APPDIR = os.getenv("APPDATA")
-	AUTOGIT_PATH = "%s/autogit/.git" % APPDIR
+	AUTOGIT_PATH = "%s/autogit/" % APPDIR
+	AUTOGIT_PATH = AUTOGIT_PATH.replace("\\","/")
+
+
 elif( MacOsVersion ):
 	AUTOGIT_PATH = "%s/Library/Application Support/autogit/" % HOME
 
@@ -41,7 +46,14 @@ def fixPath():
 			return
 	sys.path.append(PYGIT2_BASEDIR)
 fixPath();
-import pygit2
+
+print sys.path
+
+#import pygit2
+from dulwich.repo import Repo
+from dulwich.index import index_entry_from_stat, changes_from_tree
+from dulwich.objects import Blob
+from dulwich.diff_tree import tree_changes
 
 class ExampleCommand(sublime_plugin.TextCommand):
 	def run(self, edit):
@@ -49,7 +61,10 @@ class ExampleCommand(sublime_plugin.TextCommand):
 
 class GitRepository():
 	def init(self,path):
-		pygit2.init_repository(path, False)
+		#pygit2.init_repository(path, False)
+		if( not os.path.isdir( path ) ):
+			os.makedirs(path)
+		Repo.init(path)
 
 	def adjustPath(self, gitRoot, filePath):
 		drive, path = os.path.splitdrive(filePath)
@@ -57,9 +72,34 @@ class GitRepository():
 			path = path.replace("\\","/")
 		if( path.startswith("/") ):
 			path = path[1:]
-		return os.path.join( gitRoot, path )
+		joined = os.path.join( gitRoot, path )
+		joined = joined.replace("\\","/")
+		return joined
 
-	def commit(self, filePath, kind):
+	def dulwichCommit(self, filePath, fullPath, kind):
+
+		git = Repo(AUTOGIT_PATH)
+		staged = map(str,[filePath])
+		git.stage( staged )
+
+		index = git.open_index()
+
+		try:
+			committer = git._get_user_identity()
+		except ValueError:
+			committer = "autogit"
+
+		try:
+			head = git.head()
+		except KeyError:
+			return git.do_commit( '%s - autogit commit (via dulwich)' % kind, committer=committer)
+
+		changes = list(tree_changes(git, index.commit(git.object_store), git['HEAD'].tree))
+		if changes and len(changes) > 0:
+			return git.do_commit( '%s - autogit commit (via dulwich)' % kind, committer=committer)
+		return None
+
+	def pygit2Commit(self, filePath, kind):
 
 		git = pygit2.Repository(GIT_REPOSITORY_PATH)
 
@@ -122,6 +162,7 @@ class AutoGitEvent(sublime_plugin.EventListener):
 		path = repo.adjustPath( AUTOGIT_PATH, view.file_name() )
 
 		dir = os.path.dirname( path )
+
 		if( not os.path.isdir(dir) ):
 			os.makedirs(dir)
 
@@ -129,13 +170,18 @@ class AutoGitEvent(sublime_plugin.EventListener):
 
 		## rel path is needed for commit
 		relPath = path.replace(AUTOGIT_PATH, "")
-		return repo.commit(relPath, kind)
+		if( relPath.startswith("/") ):
+			relPath = relPath[1:]
+
+
+		#return repo.commit(relPath, kind)
+		return repo.dulwichCommit(relPath, path, kind)
 
 ### Create initial autogit repository if it doesn't exist
 
 GIT_REPOSITORY_PATH = os.path.join( AUTOGIT_PATH, ".git" )
 if( not os.path.isdir( GIT_REPOSITORY_PATH ) ):
 	repo = GitRepository()
-	repo.init(GIT_REPOSITORY_PATH)
+	repo.init(AUTOGIT_PATH)
 	print "##### created git repo: " + GIT_REPOSITORY_PATH
 
