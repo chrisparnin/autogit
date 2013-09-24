@@ -141,6 +141,9 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="License.rtf">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
     <None Include="source.extension.vsixmanifest">
       <SubType>Designer</SubType>
     </None>
@@ -168,13 +171,10 @@
   <PropertyGroup>
     <UseCodebase>true</UseCodebase>
   </PropertyGroup>
-
   <!-- Link Native Binaries to packages with filter -->
-
   <PropertyGroup>
     <NativeBinariesDirectory>$(MSBuildProjectDirectory)\..\packages\LibGit2Sharp.0.13.0.0\NativeBinaries</NativeBinariesDirectory>
   </PropertyGroup>
-
   <ItemGroup>
     <Content Include="$(NativeBinariesDirectory)\**\*.*">
       <Link>NativeBinaries\%(RecursiveDir)%(Filename)%(Extension)</Link>
@@ -182,8 +182,6 @@
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
   </ItemGroup>
-
-  
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(VSToolsPath)\VSSDK\Microsoft.VsSDK.targets" Condition="'$(VSToolsPath)' != ''" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
@@ -191,7 +189,7 @@
   <Target Name="BeforeBuild">
   </Target>
   <Target Name="AfterBuild">
-     <!-- Debug information to help see what is included in vsix output -->
-    <Message Text="FileWrites: @(FileWrites)" Importance="high"/>
+    <!-- Debug information to help see what is included in vsix output -->
+    <Message Text="FileWrites: @(FileWrites)" Importance="high" />
   </Target>
 </Project>
