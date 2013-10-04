@@ -154,6 +154,7 @@
   <ItemGroup>
     <VSCTCompile Include="autogit.vsct">
       <ResourceName>Menus.ctmenu</ResourceName>
+      <SubType>Designer</SubType>
     </VSCTCompile>
   </ItemGroup>
   <ItemGroup>
@@ -176,7 +177,7 @@
     <NativeBinariesDirectory>$(MSBuildProjectDirectory)\..\packages\LibGit2Sharp.0.13.0.0\NativeBinaries</NativeBinariesDirectory>
   </PropertyGroup>
   <ItemGroup>
-    <Content Include="$(NativeBinariesDirectory)\**\*.*">
+    <Content Include="$(NativeBinariesDirectory)\**\*.dll">
       <Link>NativeBinaries\%(RecursiveDir)%(Filename)%(Extension)</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <IncludeInVSIX>true</IncludeInVSIX>
