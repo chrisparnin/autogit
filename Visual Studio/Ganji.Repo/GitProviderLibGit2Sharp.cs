@@ -114,6 +114,7 @@ namespace Ganji.Repo
 
                 repo.Index.Stage(newPath);
 
+                // TODO handle deleted files.
                 var status = repo.Index.RetrieveStatus(newPath);
                 if (status == FileStatus.Unaltered)
                 {
