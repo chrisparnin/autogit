@@ -52,15 +52,16 @@
     <!--Buttons section. -->
     <!--This section defines the elements the user can interact with, like a menu command or a button 
         or combo box in a toolbar. -->
-    <Buttons>
-      <!--To define a menu group you have to specify its ID, the parent menu and its display priority. 
+    <!--<Buttons>
+      To define a menu group you have to specify its ID, the parent menu and its display priority. 
           The command is visible and enabled by default. If you need to change the visibility, status, etc, you can use
           the CommandFlag node.
           You can add more than one CommandFlag node e.g.:
               <CommandFlag>DefaultInvisible</CommandFlag>
               <CommandFlag>DynamicVisibility</CommandFlag>
-          If you do not want an image next to your command, remove the Icon node /> -->
+          If you do not want an image next to your command, remove the Icon node />
 
+     
       <Button guid="guidautogitCmdSet" id="autogitOptionsCommand" priority="0x0100" type="Button">
         <Parent guid="guidautogitCmdSet" id="MyMenuGroup" />
         <Icon guid="guidImages" id="bmpPic1" />
@@ -70,9 +71,9 @@
       </Button>
 
 
-
     </Buttons>
-   
+    -->
+  
     <!--The bitmaps section is used to define the bitmaps that are used for the commands.-->
     <Bitmaps>
       <!--  The bitmap id is defined in a way that is a little bit different from the others: 

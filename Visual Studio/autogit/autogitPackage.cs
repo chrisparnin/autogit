@@ -55,14 +55,14 @@ namespace ninlabsresearch.autogit
             base.Initialize();
 
             // Add our command handlers for menu (commands must exist in the .vsct file)
-            OleMenuCommandService mcs = GetService(typeof(IMenuCommandService)) as OleMenuCommandService;
-            if ( null != mcs )
-            {
-                // Create the command for the menu item.
-                CommandID menuCommandID = new CommandID(GuidList.guidautogitCmdSet, (int)PkgCmdIDList.autogitOptionsCommand);
-                MenuCommand menuItem = new MenuCommand(MenuItemCallback, menuCommandID );
-                mcs.AddCommand( menuItem );
-            }
+            //OleMenuCommandService mcs = GetService(typeof(IMenuCommandService)) as OleMenuCommandService;
+            //if ( null != mcs )
+            //{
+            //    // Create the command for the menu item.
+            //    CommandID menuCommandID = new CommandID(GuidList.guidautogitCmdSet, (int)PkgCmdIDList.autogitOptionsCommand);
+            //    MenuCommand menuItem = new MenuCommand(MenuItemCallback, menuCommandID );
+            //    mcs.AddCommand( menuItem );
+            //}
 
             IVsSolution solution = (IVsSolution)GetService(typeof(SVsSolution));
             ErrorHandler.ThrowOnFailure(solution.AdviseSolutionEvents(this, out m_solutionCookie));
