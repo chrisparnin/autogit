@@ -6,6 +6,8 @@ using Microsoft.VisualStudio.Shell.Interop;
 using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Shell;
 using Ganji.Repo;
+using System.Diagnostics;
+using System.Globalization;
 
 namespace ninlabsresearch.autogit
 {
@@ -109,7 +111,13 @@ namespace ninlabsresearch.autogit
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
+                IVsActivityLog log = autogitPackage.GetGlobalService(typeof(SVsActivityLog)) as IVsActivityLog;
+                if (log == null) return;
+
+                int hr = log.LogEntry((UInt32)__ACTIVITYLOG_ENTRYTYPE.ALE_ERROR,
+                    this.ToString(), ex.Message +":"+ name + ":" + kind);
             }
+
         }
 
         public int OnBeforeDocumentWindowShow(uint docCookie, int fFirstShow, IVsWindowFrame pFrame)
