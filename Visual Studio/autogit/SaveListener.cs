@@ -8,6 +8,8 @@ using Microsoft.VisualStudio.Shell;
 using Ganji.Repo;
 using System.Diagnostics;
 using System.Globalization;
+using EnvDTE;
+using System.IO;
 
 namespace ninlabsresearch.autogit
 {
@@ -76,33 +78,58 @@ namespace ninlabsresearch.autogit
             uint itemid; IntPtr docData;
             m_RDT.GetDocumentInfo(docCookie, out flags, out readlocks, out editlocks, out name, out hier, out itemid, out docData);
 
-            // Should this only be done first time document is made?  Or is just good practice since there can be other external changes...merging, refactoring...
-            HandleSave(name, "pre save");
+            string projectPath = "";
+            try
+            {
+                var project = GetProject(hier);
+                if (project != null)
+                {
+                    // Set so rel path will be C:\path\SolutionDir\ProjectDir\project.csproj => ProjectDir\
+                    projectPath = Path.GetDirectoryName(Path.GetDirectoryName(project.FullName));
+                }
+            }
+            catch (Exception ex)
+            {
+
+            }
+            
+            HandleSave(name, "pre save", projectPath);
 
             return VSConstants.S_OK;
         }
 
         public int OnAfterSave(uint docCookie)
         {
-            // Don't need copy as long as can compare current version...
-
-            // However, going to mark DocumentTag with after...
             uint flags, readlocks, editlocks;
             string name; IVsHierarchy hier;
             uint itemid; IntPtr docData;
             m_RDT.GetDocumentInfo(docCookie, out flags, out readlocks, out editlocks, out name, out hier, out itemid, out docData);
 
+            string projectPath = "";
+            try
+            {
+                var project = GetProject(hier);
+                if (project != null)
+                {
+                    // Set so rel path will be C:\path\SolutionDir\ProjectDir\project.csproj => ProjectDir\
+                    projectPath = Path.GetDirectoryName( Path.GetDirectoryName( project.FullName ) );
+                }
+            }
+            catch (Exception ex)
+            { 
 
-            HandleSave(name, "post save");
+            }
+
+            HandleSave(name, "post save", projectPath);
             return VSConstants.S_OK;
         }
 
-        private void HandleSave(string name, string kind)
+        private void HandleSave(string name, string kind, string projectPath)
         {
             try
             {
                 // add file to commit!
-                if (provider.CopyFileToCache(name))
+                if (provider.CopyFileToCache(name, projectPath))
                 {
                     // commit to git...
                     var commitId = provider.Commit(kind);
@@ -118,6 +145,31 @@ namespace ninlabsresearch.autogit
                     this.ToString(), ex.Message +":"+ name + ":" + kind);
             }
 
+        }
+
+        public Project GetProject(IVsHierarchy hierarchy)
+        {
+            object project;
+
+            ErrorHandler.ThrowOnFailure
+                (hierarchy.GetProperty(
+                    VSConstants.VSITEMID_ROOT,
+                    (int)__VSHPROPID.VSHPROPID_ExtObject,
+                    out project));
+
+            return (project as Project);
+        }
+
+        public IVsHierarchy GetHierarchy(IServiceProvider serviceProvider, Project project)
+        {
+            var solution =
+                serviceProvider.GetService(typeof(SVsSolution)) as IVsSolution;
+
+            IVsHierarchy hierarchy;
+
+            solution.GetProjectOfUniqueName(project.FullName, out hierarchy);
+
+            return hierarchy;
         }
 
         public int OnBeforeDocumentWindowShow(uint docCookie, int fFirstShow, IVsWindowFrame pFrame)

@@ -105,11 +105,11 @@ namespace Ganji.Repo
             this.UserName = WindowsIdentity.GetCurrent().Name;
         }
 
-        public bool CopyFileToCache(string file)
+        public bool CopyFileToCache(string file, string projectPath)
         {
             using (Repository repo = new Repository(RepoPath))
             {
-                var newPath = PrepareDocumentCache(file, ContextRepository);
+                var newPath = PrepareDocumentCache(file, ContextRepository, projectPath);
                 System.IO.File.Copy(file, newPath, true);
 
                 repo.Index.Stage(newPath);
@@ -139,33 +139,33 @@ namespace Ganji.Repo
             }
         }
 
-        public string ReadCommit(string commitId, string fileName)
-        {
-            try
-            {
-                string relativePath = GetRelativeName(fileName);
-                using (Repository repo = new Repository(RepoPath))
-                {
-                    var commit = repo.Lookup<Commit>(commitId);
-                    if (commit == null)
-                        return null;
-                    var blob = commit[relativePath];
-                    if( blob == null )
-                        return null;
-                    var blobTarget = blob.Target as Blob;
-                    return blobTarget.ContentAsUtf8();
-                }
-            }
-            catch (Exception ex)
-            {
-                Trace.WriteLine(ex.Message);
-            }
-            return null;
-        }
+        //public string ReadCommit(string commitId, string fileName)
+        //{
+        //    try
+        //    {
+        //        string relativePath = GetRelativeName(fileName);
+        //        using (Repository repo = new Repository(RepoPath))
+        //        {
+        //            var commit = repo.Lookup<Commit>(commitId);
+        //            if (commit == null)
+        //                return null;
+        //            var blob = commit[relativePath];
+        //            if( blob == null )
+        //                return null;
+        //            var blobTarget = blob.Target as Blob;
+        //            return blobTarget.ContentAsUtf8();
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        Trace.WriteLine(ex.Message);
+        //    }
+        //    return null;
+        //}
 
-        private string PrepareDocumentCache(string file, string repoPath)
+        private string PrepareDocumentCache(string file, string repoPath, string projectPath)
         {
-            string relativePath = GetRelativeName(file);
+            string relativePath = GetRelativeName(file, projectPath);
             var newPath = System.IO.Path.Combine(repoPath, relativePath);
             var dirPath = System.IO.Path.GetDirectoryName(newPath);
             if (!System.IO.File.Exists(dirPath))
@@ -176,17 +176,27 @@ namespace Ganji.Repo
             return newPath;
         }
 
-        private string GetGitFriendlyName(string file)
-        {
-            var relative = GetRelativeName(file);
-            var parts = relative.Split(System.IO.Path.DirectorySeparatorChar);
-            return string.Join("/", parts);
-        }
+        //private string GetGitFriendlyName(string file)
+        //{
+        //    var relative = GetRelativeName(file);
+        //    var parts = relative.Split(System.IO.Path.DirectorySeparatorChar);
+        //    return string.Join("/", parts);
+        //}
 
-        private string GetRelativeName(string file)
+        private string GetRelativeName(string file, string projectPath)
         {
-            var dir = SolutionBaseDirectory.EndsWith("\\") ? SolutionBaseDirectory : SolutionBaseDirectory + "\\";
-            return file.Replace(dir, "");
+            // Test if project is in NOT solution directory
+            if (SolutionBaseDirectory.Replace(projectPath, "").Length == SolutionBaseDirectory.Length)
+            {
+                // Then lets use project to calc relative path.
+                var dir = projectPath.EndsWith("\\") ? projectPath : projectPath + "\\";
+                return file.Replace(dir, "");
+            }
+            else
+            {
+                var dir = SolutionBaseDirectory.EndsWith("\\") ? SolutionBaseDirectory : SolutionBaseDirectory + "\\";
+                return file.Replace(dir, "");
+            }
         }
     }
 }

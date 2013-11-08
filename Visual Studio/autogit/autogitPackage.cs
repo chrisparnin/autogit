@@ -33,6 +33,7 @@ namespace ninlabsresearch.autogit
     [Guid(GuidList.guidautogitPkgString)]
     // VSContants.UICONTEXT_SolutionExists
     [ProvideAutoLoad("f1536ef8-92ec-443c-9ed7-fdadf150da82")]
+    //[ProvideAutoLoad(VSConstants.UICONTEXT.NoSolution_string)]
     public sealed class autogitPackage : Package, IVsSolutionEvents
     {
         private uint m_solutionCookie = 0;
